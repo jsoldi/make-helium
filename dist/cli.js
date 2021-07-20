@@ -5,9 +5,10 @@ import { Builder } from './builder.js';
 import fs from 'fs';
 import { utils } from './utils.js';
 const program = new Command();
+const pkg = JSON.parse(fs.readFileSync(new URL('./pkg.json', import.meta.url)).toString());
 const opts = program
-    .name('make-helium')
-    .version('0.1.0')
+    .name(pkg.name)
+    .version(pkg.version)
     .option('--output <FILE>', 'the Helium script output file', 'helium.hls')
     .option('--rootDir <DIRECTORY>', 'the TypeScript input directory', process.cwd())
     .option('--init', 'create default tsconfig.json and index.ts files')

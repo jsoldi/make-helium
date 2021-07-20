@@ -1,0 +1,17 @@
+@Eval.ScriptsCode = "<SCRIPT>"
+
+@Eval.RunOrEvalToJSON = \mode name argument.{
+    ((@.If (@Core.Equal mode "eval") Browser.EvalScript Browser.RunScript) (@List.Sum [
+        @Eval.ScriptsCode 
+        ";\n return JSON.stringify(helium." 
+        mode 
+        "."
+        name
+        "(...[...Array(Object.keys(argument).length).keys()].map(i => argument['_' + i])))"
+    ]) argument)
+}
+
+@Eval.RunOrEval = \mode name argument rType.{
+    (@Eval.RunOrEvalToJSON mode name argument) -> json
+    (@JSON.Parse rType json)
+}
