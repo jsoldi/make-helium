@@ -13,3 +13,7 @@ interface Global {
     webRequest: (url: string, method: string, headers: unknown, body: unknown, timeout: number, returnBytes: boolean) => { headers: any; response: any } 
     recur: boolean
 }
+
+// @ts-ignore
+declare const global: Global
+declare const element: HTMLElement
