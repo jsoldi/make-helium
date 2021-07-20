@@ -1,0 +1,21 @@
+{
+  "name": "make-helium",
+  "version": "0.1.0",
+  "description": "Make Helium Scraper importable code from TypeScript",
+  "type": "module",
+  "main": "./dist/cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Juan Soldi",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.3.3"
+  },
+  "bin": {
+    "make-helium": "./dist/cli.js"
+  },
+  "dependencies": {
+    "commander": "^8.0.0"
+  }
+}
