@@ -85,9 +85,18 @@ export class Compiler {
         }
     }
 
+    plainReplace(text: string, match: string, replacement: string) {
+        var index = text.indexOf(match);
+
+        if (index !== -1) 
+            text = text.substring(0, index) + replacement + text.substring(match.length + index);
+
+        return text;
+    }
+
     compileLambdaCode = (data: LambdaData, script: string) => {
         var code = helium;
-        code = code.replace('<SCRIPT>', this.escapeString(script))
+        code = this.plainReplace(code, '<SCRIPT>', this.escapeString(script));
         code = code + this.compileLambdaData(data);
         return code;
     }

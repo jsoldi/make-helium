@@ -74,10 +74,16 @@ export class Compiler {
         };
         this.compileLambdaCode = (data, script) => {
             var code = helium;
-            code = code.replace('<SCRIPT>', this.escapeString(script));
+            code = this.plainReplace(code, '<SCRIPT>', this.escapeString(script));
             code = code + this.compileLambdaData(data);
             return code;
         };
+    }
+    plainReplace(text, match, replacement) {
+        var index = text.indexOf(match);
+        if (index !== -1)
+            text = text.substring(0, index) + replacement + text.substring(match.length + index);
+        return text;
     }
 }
 //# sourceMappingURL=compiler.js.map
