@@ -4,6 +4,7 @@ import ts from 'typescript'
 import { Compiler } from './compiler.js'
 import { Typing, SimpleArray } from './typing.js'
 import { utils } from './utils.js'
+import UglifyJS from 'uglify-js'
 
 export class DiagnosticsError extends Error {
     diagnostics: ts.Diagnostic[]
@@ -115,9 +116,19 @@ export class Builder {
         return this.compiler.compileLambdaCode(data, script);
     }
 
+    minifyCode = (code: string) => {
+        let min = UglifyJS.minify(code);
+
+        if (min.error)
+            throw min.error;
+
+        return min.code;
+    }
+
     build = (outputLambdaPath: string) => {
         let scriptCode = this.getScriptCode();
-        let lambdaCode = this.getLambdaCode(scriptCode);
+        let minScriptCode = this.minifyCode(scriptCode);
+        let lambdaCode = this.getLambdaCode(minScriptCode);
         let outPath = path.resolve(outputLambdaPath);
         utils.createDirectory(outPath);
         fs.writeFileSync(outPath, lambdaCode);

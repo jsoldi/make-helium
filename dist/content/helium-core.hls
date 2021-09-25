@@ -3,11 +3,12 @@
 @Eval.RunOrEvalToJSON = \mode name argument.{
     ((@.If (@Core.Equal mode "eval") Browser.EvalScript Browser.RunScript) (@List.Sum [
         @Eval.ScriptsCode 
-        ";\n return JSON.stringify(helium." 
+        ";\n let result = helium." 
         mode 
         "."
         name
-        "(...[...Array(Object.keys(argument).length).keys()].map(i => argument['_' + i])))"
+        "(...[...Array(Object.keys(argument).length).keys()].map(i => argument['_' + i]));\n"
+        "return result && typeof result.then === 'function' ? result.then(r => JSON.stringify(r)) : JSON.stringify(result);"
     ]) argument)
 }
 

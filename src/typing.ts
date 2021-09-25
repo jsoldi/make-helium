@@ -73,6 +73,10 @@ export class Typing {
             if (type.flags & ts.TypeFlags.Boolean)
                 return { name: 'Boolean' }
     
+            if (type.symbol?.name === 'Promise' && this.isTypeReference(type) && type.typeArguments && type.typeArguments.length === 1) {
+                return this.simplifyType(type.typeArguments[0]);
+            }
+
             // Type symbol may actually be undefined
             if (type.symbol?.name === 'Array' && this.isTypeReference(type) && type.typeArguments && type.typeArguments.length === 1) {
                 var elementType = this.simplifyType(type.typeArguments[0]);
