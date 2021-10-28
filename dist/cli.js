@@ -12,6 +12,7 @@ const opts = program
     .option('--output <FILE>', 'the Helium script output file', 'helium.hls')
     .option('--rootDir <DIRECTORY>', 'the TypeScript input directory', process.cwd())
     .option('--init', 'create default tsconfig.json and index.ts files')
+    .option('--max', 'no minify')
     .showHelpAfterError()
     .parse(process.argv)
     .opts();
@@ -25,6 +26,6 @@ if (opts.init) {
 }
 else {
     const builder = new Builder(opts.rootDir);
-    builder.build(opts.output);
+    builder.build(opts.output, !opts.max);
 }
 //# sourceMappingURL=cli.js.map

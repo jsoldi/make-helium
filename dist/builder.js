@@ -73,9 +73,9 @@ export class Builder {
                 throw min.error;
             return min.code;
         };
-        this.build = (outputLambdaPath) => {
+        this.build = (outputLambdaPath, minify) => {
             let scriptCode = this.getScriptCode();
-            let minScriptCode = this.minifyCode(scriptCode);
+            let minScriptCode = minify ? this.minifyCode(scriptCode) : scriptCode;
             let lambdaCode = this.getLambdaCode(minScriptCode);
             let outPath = path.resolve(outputLambdaPath);
             utils.createDirectory(outPath);

@@ -1,7 +1,7 @@
 {
   "name": "make-helium",
-  "version": "1.2.1",
-  "description": "Make Helium Scraper importable code from TypeScript",
+  "version": "1.2.4",
+  "description": "Makes Helium Scraper importable code from TypeScript",
   "type": "module",
   "main": "./dist/cli.js",
   "scripts": {
@@ -21,5 +21,8 @@
     "commander": "^8.0.0",
     "typescript": "^4.3.5",
     "uglify-js": "^3.14.2"
-  }
+  },
+  "keywords": [
+    "helium scraper"
+  ]
 }
