@@ -1,6 +1,6 @@
 {
   "name": "make-helium",
-  "version": "1.2.6",
+  "version": "1.2.7",
   "description": "Makes Helium Scraper importable code from TypeScript",
   "type": "module",
   "main": "./dist/cli.js",

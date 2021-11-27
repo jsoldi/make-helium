@@ -30,7 +30,7 @@ export class Builder {
     readonly typing: Typing
     readonly compiler: Compiler
 
-    constructor(inputDir: string) {
+    constructor(private readonly inputDir: string) {
         this.program = Builder.createProgram(path.resolve(inputDir));
         this.typeChecker = this.program.getTypeChecker();
         this.typing = new Typing(this.typeChecker);
@@ -125,12 +125,35 @@ export class Builder {
         return min.code;
     }
 
+    static searchFilesRecursively(dir: string, ext: string): string[] {
+        let files = fs.readdirSync(dir);
+        let result: string[] = [];
+
+        for (let file of files) {
+            let filePath = path.join(dir, file);
+            let stat = fs.statSync(filePath);
+
+            if (stat.isDirectory())
+                result = result.concat(Builder.searchFilesRecursively(filePath, ext));
+            else if (path.extname(filePath) === ext)
+                result.push(filePath);
+        }
+
+        return result;
+    }
+
+    readHeliumCode = (excludedFile: string) => {
+        let files = Builder.searchFilesRecursively(this.inputDir, '.hls');
+        return files.filter(p => p !== excludedFile).map(f => fs.readFileSync(f, 'utf8')).join('\n');
+    }
+
     build = (outputLambdaPath: string, minify: boolean) => {
         let scriptCode = this.getScriptCode();
         let minScriptCode = minify ? this.minifyCode(scriptCode) : scriptCode;
         let lambdaCode = this.getLambdaCode(minScriptCode);
         let outPath = path.resolve(outputLambdaPath);
+        let userLambdaCode = this.readHeliumCode(outPath);
         utils.createDirectory(outPath);
-        fs.writeFileSync(outPath, lambdaCode);
+        fs.writeFileSync(outPath, lambdaCode + '\n-----------------------------------\n' + userLambdaCode);
     }
 }

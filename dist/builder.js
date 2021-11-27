@@ -20,6 +20,7 @@ DiagnosticsError.formatHost = {
 DiagnosticsError.formatDiagnostics = (diagnostics) => ts.formatDiagnostics(diagnostics, DiagnosticsError.formatHost) || 'Unknown error';
 export class Builder {
     constructor(inputDir) {
+        this.inputDir = inputDir;
         this.getFunctionsData = (sectionType, mapResult) => {
             if (sectionType) {
                 var props = this.typing.getProperties(sectionType);
@@ -73,18 +74,36 @@ export class Builder {
                 throw min.error;
             return min.code;
         };
+        this.readHeliumCode = (excludedFile) => {
+            let files = Builder.searchFilesRecursively(this.inputDir, '.hls');
+            return files.filter(p => p !== excludedFile).map(f => fs.readFileSync(f, 'utf8')).join('\n');
+        };
         this.build = (outputLambdaPath, minify) => {
             let scriptCode = this.getScriptCode();
             let minScriptCode = minify ? this.minifyCode(scriptCode) : scriptCode;
             let lambdaCode = this.getLambdaCode(minScriptCode);
             let outPath = path.resolve(outputLambdaPath);
+            let userLambdaCode = this.readHeliumCode(outPath);
             utils.createDirectory(outPath);
-            fs.writeFileSync(outPath, lambdaCode);
+            fs.writeFileSync(outPath, lambdaCode + '\n-----------------------------------\n' + userLambdaCode);
         };
         this.program = Builder.createProgram(path.resolve(inputDir));
         this.typeChecker = this.program.getTypeChecker();
         this.typing = new Typing(this.typeChecker);
         this.compiler = new Compiler();
+    }
+    static searchFilesRecursively(dir, ext) {
+        let files = fs.readdirSync(dir);
+        let result = [];
+        for (let file of files) {
+            let filePath = path.join(dir, file);
+            let stat = fs.statSync(filePath);
+            if (stat.isDirectory())
+                result = result.concat(Builder.searchFilesRecursively(filePath, ext));
+            else if (path.extname(filePath) === ext)
+                result.push(filePath);
+        }
+        return result;
     }
 }
 Builder.createProgram = (absInputDir) => {
